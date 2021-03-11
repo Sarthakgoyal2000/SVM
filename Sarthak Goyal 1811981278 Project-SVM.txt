@@ -1,0 +1,134 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+import sklearn.metrics as metrics
+
+# Importing the datasets
+data=pd.read_csv("bank-additional-full(20210215_121709).csv")
+data['y'] = data['y'].replace(['no','yes'],['0','1'])
+
+X =data[['age','duration','campaign','nr.employed']] 
+Y =data['y']
+
+# Splitting the dataset into the Training set and Test set
+
+from sklearn.model_selection import train_test_split
+X_Train, X_Test, Y_Train, Y_Test = train_test_split(X, Y, test_size = 0.25, random_state = 0)
+
+# Feature Scaling
+
+from sklearn.preprocessing import StandardScaler
+sc_X = StandardScaler()
+X_Train = sc_X.fit_transform(X_Train)
+X_Test = sc_X.transform(X_Test)
+
+# Fitting the classifier into the Training set
+
+from sklearn.svm import SVC
+classifier = SVC(kernel = 'linear', random_state = 0)
+classifier.fit(X_Train, Y_Train)
+
+# Predicting the test set results
+
+Y_Pred = classifier.predict(X_Test)
+
+# Making the Confusion Matrix 
+
+from sklearn.metrics import confusion_matrix
+cm = confusion_matrix(Y_Test, Y_Pred)
+print("Accuracy of SVM:",metrics.accuracy_score(Y_Test, Y_Pred))
+
+
+
+*********************************************************************************************************************
+
+
+from sklearn import linear_model
+import tkinter as tk 
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+data=pd.read_csv("bank-additional-full(20210215_121709).csv")
+data['y'] = data['y'].replace(['no','yes'],['0','1'])
+
+X =data[['age','duration','campaign']] 
+Y =data['y']
+regr = linear_model.LinearRegression()
+regr.fit(X, Y)
+print('Intercept: \n', regr.intercept_)
+print('Coefficients: \n', regr.coef_)
+root= tk.Tk()
+
+
+canvas1 = tk.Canvas(root, width = 500, height = 300)
+canvas1.pack()
+
+label1 = tk.Label(root, text='Type age: ')
+canvas1.create_window(100, 100, window=label1)
+
+entry1 = tk.Entry (root) 
+canvas1.create_window(270, 100, window=entry1)
+
+label2 = tk.Label(root, text=' Type duration: ')
+canvas1.create_window(105, 120, window=label2)
+
+entry2 = tk.Entry (root) 
+canvas1.create_window(270, 120, window=entry2)
+
+label3 = tk.Label(root, text=' Type campaign: ')
+canvas1.create_window(115, 140, window=label3)
+
+entry3 = tk.Entry (root) 
+canvas1.create_window(270, 140, window=entry3)
+
+
+def values(): 
+    global New_age 
+    New_age = float(entry1.get()) 
+    
+    global New_duration 
+    New_duration = float(entry2.get())
+    
+    global New_campaign 
+    New_campaign = float(entry3.get())
+    
+    
+    
+    Prediction_result  = ('Predicted Bank: ', regr.predict([[New_age,New_duration,New_campaign]]))
+    label_Prediction = tk.Label(root, text= Prediction_result, bg='yellow')
+    canvas1.create_window(310, 280, window=label_Prediction)
+    
+button1 = tk.Button (root, text='Predict Bank ',command=values, bg='orange') 
+canvas1.create_window(200, 200, window=button1)
+ 
+figure3 = plt.Figure(figsize=(4,4), dpi=100)
+ax3 = figure3.add_subplot(111)
+ax3.scatter(data['age'].astype(float),data['y'].astype(float), color = 'r')
+scatter3 = FigureCanvasTkAgg(figure3, root) 
+scatter3.get_tk_widget().pack(side=tk.RIGHT, fill=tk.BOTH)
+ax3.legend() 
+ax3.set_xlabel('age')
+ax3.set_title('age Vs. y')
+
+
+figure4 = plt.Figure(figsize=(4,4), dpi=100)
+ax4 = figure4.add_subplot(111)
+ax4.scatter(data['duration'].astype(float),data['y'].astype(float), color = 'g')
+scatter4 = FigureCanvasTkAgg(figure4, root) 
+scatter4.get_tk_widget().pack(side=tk.RIGHT, fill=tk.BOTH)
+ax4.legend() 
+ax4.set_xlabel('duration')
+ax4.set_title('duration Vs. y')
+
+
+figure5 = plt.Figure(figsize=(4,4), dpi=100)
+ax5 = figure5.add_subplot(111)
+ax5.scatter(data['campaign'].astype(float),data['y'].astype(float), color = 'y')
+scatter5 = FigureCanvasTkAgg(figure5, root) 
+scatter5.get_tk_widget().pack(side=tk.RIGHT, fill=tk.BOTH)
+ax5.legend() 
+ax5.set_xlabel('campaign')
+ax5.set_title('campaign Vs. y')
+
+
+
+root.mainloop()
